@@ -1,0 +1,57 @@
+/* 개발환경이 리눅스라 스케치에서 한글이 써지지 않아 부득이하게 주석을 영어로 했습니다 (리눅스라 오류도 많았던...)*/
+
+#include <VirtualWire_Config.h>		//don't need
+#include <VirtualWire.h>       	 //wire RF
+#include <Bounce2.h>             //bounce condition block delay
+
+
+int buttonPin = 2;            //set button pin
+
+Bounce bouncer = Bounce();    //bounce init
+
+void setup() {
+  pinMode(buttonPin, INPUT);
+  digitalWrite(buttonPin, HIGH);
+  bouncer.attach( buttonPin );
+  bouncer.interval(50);
+
+  vw_setup(2000);             //init VirtualWire
+  vw_set_tx_pin(4);           //set send pin 
+  Serial.begin(9600);
+}
+
+void loop() {
+  if ( bouncer.update() /*&& bouncer.read() == LOW*/) {      //push button (don't need read)
+    /*
+      if( oneTimeFlag == false) {                         
+     Serial.println("on");
+     sendMessage("1", "1");                            //add development
+     oneTimeFlag = true;
+     
+     } else {                                            
+     Serial.println("off");                 
+     sendMessage("1", "2");                            
+     oneTimeFlag = false;
+     
+     } */
+    Serial.println("on");			//Serial print
+    sendMessage("1-1","2-2-2-2");		//send message
+
+  }
+}
+
+//message send
+void sendMessage(char* pinCode, char *data) {
+  if (strlen(data) > 0) {           //if exist data(command)
+
+    int msgSize = (strlen(data) + strlen(pinCode) + 1);  // lenth send message
+    char packetData[msgSize];                            //init variable by length
+    strcat(packetData, pinCode);                         //문자열 합침 핀코드와 데이터
+    strcat(packetData, ".");				//합칠 때 사이에 . 으로 합침
+    strcat(packetData, data);				//이부분은 영어로 이해하기 힘들어서 따로 옴겨서 한글로 작성
+
+    vw_send((uint8_t *)packetData, msgSize);             //send message
+    vw_wait_tx();                                        //wait send message
+
+  }  
+}
