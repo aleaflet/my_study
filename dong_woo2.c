@@ -9,26 +9,34 @@ int main() {
 	memset(tile,'_',sizeof(tile));
 	//printf("시작\n");
 	location = 5;
-	while(num<13){
+	while(num<100){
 		direction = rand()%2;
 		if(direction == 0){
+			if(location == 0){
+				continue;
+			}
 			tile[location]='_';
 			location--;
 		}
 		else{
-			if(num == 0){
+
+			if(num == 0) {
+				tile[location]='*';
+				continue;
+			}
+			else if(location == 9){
 				continue;
 			}
 			tile[location]='_';
 			location++;
 		}
-		tile[location] = '*';
+		tile[location]='*';
 		for(int a=0; a<10; a++)
 			printf("%c",tile[a]);
 		printf("\n");
 		num++;
 	}
-	
-	
+
+
 	return 0;
 }
